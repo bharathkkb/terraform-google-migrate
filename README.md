@@ -29,7 +29,7 @@ Before proceeding with migration, you should already know:
 
 1.  How many approximately VMs will be migrated
 2.  What is migration target VMs source - Azure, AWS or on-prem
-3.  How many GCP projects you will need for migrated VMs 
+3.  How many GCP projects you will need for migrated VMs
 4.  Do you have/plan on-prem or other cloud connection to GCP via [VPN](https://cloud.google.com/vpn/docs/concepts/overview) / [Interconnect](https://cloud.google.com/hybrid-connectivity/)
 5.  Is there any network load balancing involved
 6.  How much storage will be needed in GCP
@@ -79,7 +79,7 @@ Finally [deploying](https://cloud.google.com/migrate/compute-engine/docs/4.5/how
 ### Tools
 
 **Install Cloud SDK** \
-The Google Cloud SDK is used to interact with your GCP resources. [Installation instructions](https://cloud.google.com/sdk/downloads) for 
+The Google Cloud SDK is used to interact with your GCP resources. [Installation instructions](https://cloud.google.com/sdk/downloads) for
 
 multiple platforms are available online.
 
@@ -87,7 +87,7 @@ multiple platforms are available online.
 Terraform is used to automate the manipulation of cloud infrastructure. Its [installation instructions](https://www.terraform.io/intro/getting-started/install.html) are also available online.
 
 **Authenticate gcloud** \
-Prior to running this, ensure you have authenticated your gcloud client by running the following command: 
+Prior to running this, ensure you have authenticated your gcloud client by running the following command:
 
 
 
@@ -115,25 +115,22 @@ The project has the following folders and files:
 ```
 
 /: root folder
-/examples: examples for using Project Factory Terraform Module
-/modules: Scripts for specific tasks on module (see Infrastructure section on this file)
+/examples: Examples for doing single and multi project deployments
+/modules: Modules for core, single and multi projects
 /helpers: Optional helper scripts for ease of use
-/core: Resources to create a core project
-/single: Resources for single project deployment
-/multi: Resources for multi project deployment
-/main.tf: main file for this module, contains all the resources to create
-/variables.tf: all the variables for the module
-/output.tf: the outputs of the module
+/main.tf: TODO
+/variables.tf:TODO
+/output.tf: TODO
 /readme.md: this file
 
 ```
+**Single project deployment:**
 
-
-We will start with deploying our **core** project:
+We will start with deploying our **single** project:
 
 
 ```
-cd core
+cd examples/single_deployment
 ```
 
 
@@ -143,8 +140,17 @@ Provide this variables in terraform.tfvars:
 ```
 organization_id = "GCP ORGANIZATION ID"
 billing_account = "GCP BILLING ID"
-default_service_account = "KEEP/DELETE/DEPRIVILEGE" 
-project_id = "CORE PROJECT THAT WILL BE CREATED ID"
+credentials_path = "SA KEY USED TO PROVISION RESOURCES"
+subnet_01_ip = "GCP VPC SUBNET IP"
+subnet_02_ip = "GCP VPC SUBNET IP"
+subnet_03_ip = "GCP VPC SUBNET IP"
+secondary_s01_range = "SECONDARY IP VPC SUBNET RANGE"
+secondary_s02_range = "SECONDARY IP VPC SUBNET RANGE"
+secondary_s03_range = "SECONDARY IP VPC SUBNET RANGE"
+subnet_01_region = "GCP VPC REGION"
+subnet_02_region = "GCP VPC REGION"
+subnet_03_region = "GCP VPC REGION"
+local_subnet_01_ip = "ON-PREM/OTHER CLOUD SUBNET"
 ```
 
 
@@ -156,46 +162,17 @@ terraform init
 tf plan -var-file="terraform.tfvars"
 tf apply -var-file="terraform.tfvars"
 ```
-
-
-Once this successfully completed move to either **single** or **multi** project deployment section:
-
-**Single project deployment:**
-
-
-```
-cd ..
-cd single
-```
-
-
-Provide this variables in terraform.tfvars:
-
-
-```
-project_id = "GCP CORE PROJECT ID"
-network_name = "NETWORK NAME TO APPLY FOR THE VPC"
-subnet_01_ip = "GCP VPC SUBNET IP"
-subnet_02_ip = "GCP VPC SUBNET IP"
-subnet_03_ip = "GCP VPC SUBNET IP"
-secondary_s01_range = "SECONDARY IP VPC SUBNET RANGE"
-secondary_s02_range = "SECONDARY IP VPC SUBNET RANGE"
-secondary_s03_range = "SECONDARY IP VPC SUBNET RANGE"
-subnet_01_region = "GCP VPC REGION"
-subnet_02_region = "GCP VPC REGION"
-subnet_03_region = "GCP VPC REGION"
-local_subnet_01_ip = "ON-PREM/OTHER CLOUD SUBNET"
-```
-
+The service accounts and project names required for completing the deployment will be generated as terraform output.
 
 Once complete continue with [deploying](https://cloud.google.com/migrate/compute-engine/docs/4.5/how-to/configure-manager/configuring-on-gcp) Migrate for Compute Engine Manager via GCP [Marketplace](https://console.cloud.google.com/marketplace/details/click-to-deploy-images/velostrata?_ga=2.230596124.-1830265044.1554384916&_gac=1.75634663.1564563946.CL6bne_m3uMCFYYkGwodLkkPoQ) and Migrate for Compute Engine [backend](https://cloud.google.com/migrate/compute-engine/docs/4.5/how-to/configure-manager/configuring-vms-vm) or [prerequisites](https://cloud.google.com/migrate/compute-engine/docs/4.5/how-to/migrate-aws-to-gcp/overview) for AWS if migrating from AWS, and [prerequisites](https://cloud.google.com/migrate/compute-engine/docs/4.5/how-to/migrate-azure-to-gcp/azure-prerequisites) for Microsoft.
+
 
 **Multi project deployment:**
 
 
 ```
 cd ..
-cd multi
+cd examples/multi_deployment
 ```
 
 
@@ -205,13 +182,7 @@ Provide this variables in terraform.tfvars:
 ```
 organization_id = "GCP ORGANIZATION ID"
 billing_account = "GCP BILLING ID"
-default_service_account = "KEEP/DELETE/DEPRIVILEGE" 
-vpc_project_id = "GCP CORE PROJECT ID"
-prod_project_id = "GCP PROD PROJECT ID"
-test_project_id = "GCP TEST PROJECT ID"
-stage_project_id = "GCP STAGING PROJECT ID"
-velo_project_id = "GCP VELOSTRATA PROJECT ID"
-network_name = "NETWORK NAME TO APPLY FOR THE VPC"
+credentials_path = "SA KEY USED TO PROVISION RESOURCES"
 subnet_01_ip = "GCP VPC SUBNET IP"
 subnet_02_ip = "GCP VPC SUBNET IP"
 subnet_03_ip = "GCP VPC SUBNET IP"
@@ -224,5 +195,6 @@ subnet_03_region = "GCP VPC REGION"
 local_subnet_01_ip = "ON-PREM/OTHER CLOUD SUBNET"
 ```
 
+The service accounts and project names required for completing the deployment will be generated as terraform output.
 
 Once complete continue with [deploying](https://cloud.google.com/migrate/compute-engine/docs/4.5/how-to/configure-manager/configuring-on-gcp) Migrate for Compute Engine Manager via GCP [Marketplace](https://console.cloud.google.com/marketplace/details/click-to-deploy-images/velostrata?_ga=2.230596124.-1830265044.1554384916&_gac=1.75634663.1564563946.CL6bne_m3uMCFYYkGwodLkkPoQ) and Migrate for Compute Engine [backend](https://cloud.google.com/migrate/compute-engine/docs/4.5/how-to/configure-manager/configuring-vms-vm) or [prerequisites](https://cloud.google.com/migrate/compute-engine/docs/4.5/how-to/migrate-aws-to-gcp/overview) for AWS if migrating from AWS, and [prerequisites](https://cloud.google.com/migrate/compute-engine/docs/4.5/how-to/migrate-azure-to-gcp/azure-prerequisites) for Microsoft Azure.
